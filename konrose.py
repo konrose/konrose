@@ -1,11 +1,28 @@
 import os, random, time
 os.system("clear")
 print("Здравствуй, добро пожаловать в игрушку!))")
+
 name = input("Введи своё имя, рядовой : ")
+
+name_f_t = True
+name_num = []
+i = 0
+
+for i in range(10) :
+    name_num.append(i)
+    i = i + 1
+
+while name_f_t == True :
+    if name[0] in str(name_num) or len(name) < 4:
+        name = input("Имя не корректно! Введите снова :")
+    if name[0] not in str(name_num) and len(name) > 4 :
+        name_f_t = False
+
+
 time.sleep(1)
 
 # Звания
-ranks = ["Рядовой", "Ефрейтор", "Мл. Сержант", "Сержант", "Ст. Сержант", "Старшина", "Прапорщик", "Ст. Прапорщик", "Мл. Лейтенант", "Лейтенант", "Ст. Лейтенант", "Капитан", "Майор", "Подполковник", "Полковник", "Генерал майор"]
+ranks = ["Рядовой", "Ефрейтор", "Мл. Сержант", "Сержант", "Ст. Сержант", "Старшина", "Прапорщик", "Ст. Прапорщик", "Мл. Лейтенант", "Лейтенант", "Ст. Лейтенант", "Капитан", "Майор", "Подполковник", "Полковник", "Генерал майор", "Генерал лейтенант", "Генерал полковник", "Генерал армии", "Маршал России"]
 ranks_num = 0
 
 money_list = []
@@ -24,6 +41,9 @@ shans = 0
 uprank = 0
 uprank_risk = 0
 uprank_max = 5
+
+playing = 0
+p_max = 10
 
 stamina = 10
 
@@ -44,11 +64,12 @@ while start == True :
         if ranks_num > 0 :
             ranks_num = ranks_num - 1
 
-    if ranks_num == 15 :
+    if ranks_num == 19 :
         max_rank = "||| Максимальное звание |||"
 
-    if uprank >= uprank_max :
+    if uprank >= uprank_max and playing >= p_max :
         uprank_max = uprank_max + 5
+        p_max = p_max + 10
         ranks_num = ranks_num + 1
         print("Вас повысили! Теперь Вы : " + str(ranks[ranks_num]) + "!")
         time.sleep(0.3)
@@ -74,7 +95,7 @@ while start == True :
     print("*=========================*")
 
     print("Имя : " + name)
-    print("Ранг : " + ranks[ranks_num] + " [" + str(ranks_num) + "] До повышения : " + str(max_rank))
+    print("Ранг : " + ranks[ranks_num] + " [" + str(ranks_num))
     print("Уровень : " + str(level) + "  [" + str(exp) + "/" + str(max_exp) + " exp.]")
     print("Стамина [" + str("*" * stamina) + "] " + str(stamina * 10) + "%")
     print("Деньги : " + str(money) + "$")
@@ -108,6 +129,7 @@ while start == True :
     if settings == 1 :
         os.system("clear")
         print("Выполняется...")
+        playing = playing + 1
         stamina = stamina - 2
         time.sleep(2)
 
@@ -132,6 +154,7 @@ while start == True :
     if settings == 3 :
         os.system("clear")
         print("Вы пропустили задание и потеряли " + str(int((100 - risk) / 2) + 5) + " exp.")
+        playing = playing - 1
         exp = exp - (int((100 - risk) / 2) + 5)
         uprank = uprank - 1
         if uprank_risk == 2 :
