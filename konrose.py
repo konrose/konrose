@@ -64,6 +64,12 @@ while start == True :
         level = level + 1
     if exp < 0 :
         exp = exp - exp
+    if stamina == 0 :
+        os.system("clear")
+        print("Вы отдохнули, но пропустили задание.")
+        time.sleep(1)
+        settings = 3
+        stamina = 10
 
     print("*=========================*")
 
@@ -83,12 +89,12 @@ while start == True :
 
     print(" ")
     print("[1] - отправится на задание. Шанс : " + str(risk) + "%. При успешном прохождении ты получишь : " + str(int((100 - risk) / 2 )) + " exp.")
-    print("[2] - пропустить задание. -" + str(int((100 - risk) / 2) + 5) + " exp.")
-    print("[3] - отправится на задание с шансом +15% за " + str(skip) + "$")
+    print("[2] - отправится на задание с шансом +15% за " + str(skip) + "$")
+    print("[3] - пропустить задание. -" + str(int((100 - risk) / 2) + 5) + " exp.")
     print(" ")
     settings = int(input("Выберите действие : "))
 
-    if settings == 3 :
+    if settings == 2 :
         if money >= skip :
             money = money - skip
             risk = risk + 15
@@ -100,13 +106,6 @@ while start == True :
             settings = 1
 
     if settings == 1 :
-        if stamina == 0 :
-            os.system("clear")
-            print("Вам необходимо отдохнуть!")
-            time.sleep(1)
-            settings = 2
-            stamina = 12
-
         os.system("clear")
         print("Выполняется...")
         stamina = stamina - 2
@@ -130,7 +129,7 @@ while start == True :
                 uprank_risk = 0
             time.sleep(2)
 
-    if settings == 2 :
+    if settings == 3 :
         os.system("clear")
         print("Вы пропустили задание и потеряли " + str(int((100 - risk) / 2) + 5) + " exp.")
         exp = exp - (int((100 - risk) / 2) + 5)
