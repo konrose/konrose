@@ -95,7 +95,7 @@ while start == True :
     print("*=========================*")
 
     print("Имя : " + name)
-    print("Ранг : " + ranks[ranks_num] + " [" + str(ranks_num))
+    print("Ранг : " + ranks[ranks_num] + " [" + str(ranks_num) + "]")
     print("Уровень : " + str(level) + "  [" + str(exp) + "/" + str(max_exp) + " exp.]")
     print("Стамина [" + str("*" * stamina) + "] " + str(stamina * 10) + "%")
     print("Деньги : " + str(money) + "$")
@@ -113,8 +113,10 @@ while start == True :
     print("[2] - отправится на задание с шансом +15% за " + str(skip) + "$")
     print("[3] - пропустить задание. -" + str(int((100 - risk) / 2) + 5) + " exp.")
     print(" ")
-    settings = int(input("Выберите действие : "))
-
+    try: # Обход ошибок при не корректном вводе
+        settings = int(input("Выберите действие : "))
+    except:
+        continue
     if settings == 2 :
         if money >= skip :
             money = money - skip
