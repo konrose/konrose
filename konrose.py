@@ -32,7 +32,7 @@ def decrypt(enc_dict, password):
     nonce = b64decode(enc_dict['nonce'])
     tag = b64decode(enc_dict['tag'])
 
-    
+
     # generate the private key from the password and salt
     private_key = hashlib.scrypt(
         password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
@@ -93,6 +93,9 @@ try: # Если файл data.txt есть, то срабатывает этот
     uprank_max = int(_vars[8])
     playing = int(_vars[9])
     p_max = int(_vars[10])
+    os.system("clear")
+    print("Добро пожаловать, " + name + "!")
+    time.sleep(1)
 except: # Иначе этот
     os.system("clear")
     print("Здравствуй, добро пожаловать в игрушку!))")
@@ -128,7 +131,7 @@ except: # Иначе этот
 
     playing = 0
     p_max = 10
-    
+
     money = 100
 
 # Звания
@@ -150,18 +153,25 @@ stamina = 10
     #level = 100
     #exp = 100000
 
+shop = ["+20 exp", "+60% энергии", "Сменить имя", "VIP статус на [30] ходов", "Выйти"]
+shop_num = 0
+shop_inp = None
+shop_money = [20, 30, 200, 500]
+
 start = True
 while start == True :
     os.system("clear")
+
+    max_rank_str = " "
+
+    if ranks_num == 19 :
+        max_rank_str = "||| Максимальное звание |||"
 
     max_rank = uprank_max - uprank
     if max_rank > 9 :
         uprank_max = 5
         if ranks_num > 0 :
             ranks_num = ranks_num - 1
-
-    if ranks_num == 19 :
-        max_rank = "||| Максимальное звание |||"
 
     if uprank >= uprank_max and playing >= p_max :
         uprank_max = uprank_max + 5
@@ -177,6 +187,7 @@ while start == True :
             os.system("clear")
 
     if exp >= max_exp :
+        exp = 0
         max_exp = max_exp + (int(max_exp * 40 / 100))
         level = level + 1
     if exp < 0 :
@@ -191,7 +202,7 @@ while start == True :
     print("*=========================*")
 
     print("Имя : " + name)
-    print("Ранг : " + ranks[ranks_num] + " [" + str(ranks_num) + "]")
+    print("Ранг : " + ranks[ranks_num] + " [" + str(ranks_num) + "] " + str(max_rank_str))
     print("Уровень : " + str(level) + "  [" + str(exp) + "/" + str(max_exp) + " exp.]")
     print("Стамина [" + str("*" * stamina) + "] " + str(stamina * 10) + "%")
     print("Деньги : " + str(money) + "$")
@@ -207,8 +218,9 @@ while start == True :
     print(" ")
     print("[1] - отправится на задание. Шанс : " + str(risk) + "%. При успешном прохождении ты получишь : " + str(int((100 - risk) / 2 )) + " exp.")
     print("[2] - отправится на задание с шансом +15% за " + str(skip) + "$")
-    print("[3] - пропустить задание. -" + str(int((100 - risk) / 2) + 5) + " exp.")
-    print("[4] - сохранить и выйти.")
+    print("[3] - пропустить задание. -" + str(int((100 - risk) / 4) + 5) + " exp.")
+    print("[4] - Магазин (NEW)")
+    print("[5] - сохранить и выйти.")
     print(" ")
 
     try: # Обход ошибок при не корректном вводе
@@ -230,6 +242,8 @@ while start == True :
         if money >= skip :
             money = money - skip
             risk = risk + 15
+            if risk > 100 :
+                risk = 100
             settings = 1
         if money < skip :
             os.system("clear")
@@ -247,7 +261,7 @@ while start == True :
         if shans <= risk :
             os.system("clear")
             print("Задание выполнено! + " + str(int((100 - risk) / 2)) + " exp.")
-            exp = exp + (int((100 - risk)/2))
+            exp = exp + (int((100 - risk) / 2 ))
             uprank = uprank + 1
             time.sleep(2)
         if shans > risk :
@@ -266,13 +280,56 @@ while start == True :
         os.system("clear")
         print("Вы пропустили задание и потеряли " + str(int((100 - risk) / 2) + 5) + " exp.")
         playing = playing - 1
-        exp = exp - (int((100 - risk) / 2) + 5)
+        exp = exp - (int((100 - risk) / 4) + 5)
         uprank = uprank - 1
         if uprank_risk == 2 :
             uprank = uprank - 1
             uprank_risk = 0
-    
-    elif settings == 4:
+
+    elif settings == 4 :
+        os.system("clear")
+        stamina -= 2
+
+        print("[1] - [" + shop[0] + "] Стоимость : " + str(shop_money[0]) + "$")
+        print("[2] - [" + shop[1] + "] Стоимость : " + str(shop_money[1]) + "$")
+        print("[3] - [" + shop[2] + "] Стоимость : " + str(shop_money[2]) + "$")
+        print("[4] - [" + shop[3] + "] Стоимость : " + str(shop_money[3]) + "$ (СКОРО)")
+        print(" ")
+        print("Ваш баланс : " + str(money) + "$")
+        print(" ")
+        print("[5] - [" + shop[4] + "]")
+        print(" ")
+        shop_inp = int(input("Выберите действие : "))
+
+        if shop_inp == 1 :
+            if money >= shop_money[0] :
+                money -= shop_money[0]
+                exp += 20
+                print("Успешно приобретено +20 exp!")
+                time.sleep(1)
+            elif money < shop_money[0] :
+                print("Не достаточно средств!")
+                time.sleep(1)
+        elif shop_inp == 2 :
+            if money >= shop_money[1] :
+                money -= shop_money[1]
+                stamina += 6
+                print("Успешно приобретено +60% энергии!")
+                time.sleep(1)
+            elif money < shop_money[1] :
+                print("Не достаточно средств!")
+                time.sleep(1)
+        elif shop_inp == 3 :
+            if money >= shop_money[2] :
+                money -= shop_money[2]
+                name = input("Введите новое имя : ")
+                print("Успешно приобретено новое имя! [" + name + "]")
+                time.sleep(1)
+            elif money < shop_money[1] :
+                print("Не достаточно средств!")
+                time.sleep(1)
+
+    elif settings == 5:
         save_data()
         os.system("clear")
         break
