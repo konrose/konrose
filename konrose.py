@@ -1,17 +1,98 @@
 import os, random, time
-try: # Если файл data.py есть, то срабатывает этот блок кода
-    import data
-    name = data.name
-    level = data.level
-    ranks_num = data.ranks_num
-    exp = data.exp
-    money = data.money
-    max_exp = data.max_exp
-    uprank = data.uprank
-    uprank_risk = data.uprank_risk
-    uprank_max = data.uprank_max
-    playing = data.playing
-    p_max = data.p_max
+
+from base64 import b64encode, b64decode
+import hashlib
+from Cryptodome.Cipher import AES
+from Cryptodome.Random import get_random_bytes
+
+def encrypt(plain_text, password):
+    # generate a random salt
+    salt = get_random_bytes(AES.block_size)
+
+    # use the Scrypt KDF to get a private key from the password
+    private_key = hashlib.scrypt(
+        password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
+
+    # create cipher config
+    cipher_config = AES.new(private_key, AES.MODE_GCM)
+
+    # return a dictionary with the encrypted text
+    cipher_text, tag = cipher_config.encrypt_and_digest(bytes(plain_text, 'utf-8'))
+    return {
+        'cipher_text': b64encode(cipher_text).decode('utf-8'),
+        'salt': b64encode(salt).decode('utf-8'),
+        'nonce': b64encode(cipher_config.nonce).decode('utf-8'),
+        'tag': b64encode(tag).decode('utf-8')
+    }
+
+def decrypt(enc_dict, password):
+    # decode the dictionary entries from base64
+    salt = b64decode(enc_dict['salt'])
+    cipher_text = b64decode(enc_dict['cipher_text'])
+    nonce = b64decode(enc_dict['nonce'])
+    tag = b64decode(enc_dict['tag'])
+
+    
+    # generate the private key from the password and salt
+    private_key = hashlib.scrypt(
+        password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
+
+    # create the cipher config
+    cipher = AES.new(private_key, AES.MODE_GCM, nonce=nonce)
+
+    # decrypt the cipher text
+    decrypted = cipher.decrypt_and_verify(cipher_text, tag)
+
+    return decrypted
+
+def save_data():
+    f = open('data.txt', 'w') # Создание/перезапись файла
+    f.write(str(encrypt(name, password)) + '\n')
+    f.write(str(encrypt(str(level), password)) + '\n')
+    f.write(str(encrypt(str(ranks_num), password)) + '\n')
+    f.write(str(encrypt(str(exp), password)) + '\n')
+    f.write(str(encrypt(str(money), password)) + '\n')
+    f.write(str(encrypt(str(max_exp), password)) + '\n')
+    f.write(str(encrypt(str(uprank), password)) + '\n')
+    f.write(str(encrypt(str(uprank_risk), password)) + '\n')
+    f.write(str(encrypt(str(uprank_max), password)) + '\n')
+    f.write(str(encrypt(str(playing), password)) + '\n')
+    f.write(str(encrypt(str(p_max), password)) + '\n')
+    f.close()
+
+password = 'C9G#@|S9WSus1A6hyygko*y$0K8SuAhEieBZE#FvQehx@qYJm#6Oi}9InC1vXaSo'
+
+try: # Если файл data.txt есть, то срабатывает этот блок кода
+    f = open('data.txt', 'r')
+    lines = []
+    for line in f:
+        line = line.split('\n')[0]
+        line = list(line)
+        line.pop(0)
+        line.pop(-1)
+        line = ''.join(line)
+        args = line.split(', ')
+        _args = []
+        for arg in args:
+            arg = arg.split(': ')[1]
+            _args.append(arg)
+        lines.append({'cipher_text': _args[0], 'salt': _args[1], 'nonce': _args[2], 'tag': _args[3]})
+    f.close()
+    _vars = []
+    for i, el in enumerate(lines):
+        _vars.append(bytes.decode(decrypt(el, password)))
+
+    name = _vars[0]
+    level = int(_vars[1])
+    ranks_num = int(_vars[2])
+    exp = int(_vars[3])
+    money = int(_vars[4])
+    max_exp = int(_vars[5])
+    uprank = int(_vars[6])
+    uprank_risk = int(_vars[7])
+    uprank_max = int(_vars[8])
+    playing = int(_vars[9])
+    p_max = int(_vars[10])
 except: # Иначе этот
     os.system("clear")
     print("Здравствуй, добро пожаловать в игрушку!))")
@@ -29,7 +110,7 @@ except: # Иначе этот
     while name_f_t == True :
         if name[0] in str(name_num) or len(name) < 4:
             name = input("Имя не корректно! Введите снова :")
-        if name[0] not in str(name_num) and len(name) > 4 :
+        if name[0] not in str(name_num) and len(name) >= 4 :
             name_f_t = False
 
 
@@ -49,21 +130,6 @@ except: # Иначе этот
     p_max = 10
     
     money = 100
-
-def save_data():
-    f = open('data.py', 'w') # Создание/перезапись файла
-    f.write('name = "' + name + '"\n')
-    f.write('level = ' + str(level) + '\n')
-    f.write('ranks_num = ' + str(ranks_num) + '\n')
-    f.write('exp = ' + str(exp) + '\n')
-    f.write('money = ' + str(money) + '\n')
-    f.write('max_exp = ' + str(max_exp) + '\n')
-    f.write('uprank = ' + str(uprank) + '\n')
-    f.write('uprank_risk = ' + str(uprank_risk) + '\n')
-    f.write('uprank_max = ' + str(uprank_max) + '\n')
-    f.write('playing = ' + str(playing) + '\n')
-    f.write('p_max = ' + str(p_max) + '\n')
-    f.close()
 
 # Звания
 ranks = ["Рядовой", "Ефрейтор", "Мл. Сержант", "Сержант", "Ст. Сержант", "Старшина", "Прапорщик", "Ст. Прапорщик", "Мл. Лейтенант", "Лейтенант", "Ст. Лейтенант", "Капитан", "Майор", "Подполковник", "Полковник", "Генерал майор", "Генерал лейтенант", "Генерал полковник", "Генерал армии", "Маршал России"]
@@ -158,6 +224,7 @@ while start == True :
         exp -= 10
         if exp < 0:
             exp = 0
+        time.sleep(1)
 
     if settings == 2 :
         if money >= skip :
@@ -214,3 +281,4 @@ while start == True :
         exp -= 10
         if exp < 0:
             exp = 0
+        time.sleep(1)
