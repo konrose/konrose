@@ -1,4 +1,19 @@
 # konrose
+Инструкция по установке (ПК) :
+  - Установить Python3 с оф. сайта
+  - Загрузить игру с github.
+  - Запустить игру через PowerShell командой [python3 konrose.py]
+Инструкция по установке (Android) :
+  - Установить Termux
+  - выполнить команды 
+                      [pkg update]
+                      [pkg upgrade]
+                      [pkg install git]
+                      [pkg install python]
+                      [git clone https://github/konrose/konrose/]
+                      [cd konrose]
+                      [python3 konrose.py]
+
 
 - Добавлено шифрование данных.
 - Добавлен магазин с товарами.
