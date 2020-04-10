@@ -5,6 +5,8 @@ import hashlib
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 
+version = [1,0,0] # обновляй версию после каждого обновления
+
 def encrypt(plain_text, password):
     # generate a random salt
     salt = get_random_bytes(AES.block_size)
@@ -58,6 +60,9 @@ def save_data():
     f.write(str(encrypt(str(uprank_max), password)) + '\n')
     f.write(str(encrypt(str(playing), password)) + '\n')
     f.write(str(encrypt(str(p_max), password)) + '\n')
+    f.write(str(encrypt(str(uvolnenie), password)) + '\n') # NEW
+    f.write(str(encrypt(str(vip_num), password)) + '\n')
+    f.write(str(encrypt(str(vip_tf), password)) + '\n')
     f.close()
 
 password = 'C9G#@|S9WSus1A6hyygko*y$0K8SuAhEieBZE#FvQehx@qYJm#6Oi}9InC1vXaSo'
@@ -93,7 +98,12 @@ try: # Если файл data.txt есть, то срабатывает этот
     uprank_max = int(_vars[8])
     playing = int(_vars[9])
     p_max = int(_vars[10])
+    uvolnenie = int(_vars[11]) # NEW
+    vip_num = int(_vars[12])
+    vip_tf = bool(_vars[13])
+
     os.system("clear")
+
     print("WELCOME TO")
     time.sleep(0.2)
     print(" ____             _        _   _ ____  ")
@@ -106,9 +116,12 @@ try: # Если файл data.txt есть, то срабатывает этот
     time.sleep(0.2)
     print("|_| \_\__,_|_| |_|_|\_\___/\___/|_|   ")
     time.sleep(0.2)
+    print("Version : " + str(version))
+    time.sleep(0.4)
     print("")
     print("Добро пожаловать, " + name + "!")
     time.sleep(2)
+
 except: # Иначе этот
     os.system("clear")
     print("WELCOME TO")
@@ -133,7 +146,7 @@ except: # Иначе этот
 
     for i in range(10) :
         name_num.append(i)
-        i = i + 1
+        i += 1
 
     while name_f_t == True :
         if name[0] in str(name_num) or len(name) < 4:
@@ -154,10 +167,20 @@ except: # Иначе этот
     uprank_risk = 0
     uprank_max = 5
 
+    uvolnenie = 0
+
     playing = 0
     p_max = 10
 
     money = 100
+    money_for_quest = 0
+
+    vip_num = 0
+    def vip() :
+        print("VIP-статус Активирован! Окончание через : " + str(vip_num) )
+    vip_tf = False
+vip_risk = 30
+vip_money_for_quest = 30 # деньги с випкой за выполнение задания
 
 # Звания
 ranks = ["Рядовой", "Ефрейтор", "Мл. Сержант", "Сержант", "Ст. Сержант", "Старшина", "Прапорщик", "Ст. Прапорщик", "Мл. Лейтенант", "Лейтенант", "Ст. Лейтенант", "Капитан", "Майор", "Подполковник", "Полковник", "Генерал майор", "Генерал лейтенант", "Генерал полковник", "Генерал армии", "Маршал России"]
@@ -178,14 +201,25 @@ stamina = 10
     #level = 100
     #exp = 100000
 
-shop = ["+20 exp", "+60% энергии", "Сменить имя", "VIP статус на [30] ходов", "Выйти"]
+shop = [    "+20 exp",      "+60% энергии",     "Сменить имя",      "VIP статус на [30] ходов", "Выйти"]
+shop_money = [20,           30,                 200,                 500] # Стоимость
 shop_num = 0
 shop_inp = None
-shop_money = [20, 30, 200, 500]
 
 start = True
+
 while start == True :
     os.system("clear")
+
+    if uvolnenie == 60 :
+        os.system("clear")
+        print("Вас уволили... Игра окончена.")
+        os.system("rm data.txt")
+        start = False
+        break
+
+    if vip_num == 0 :
+        vip_tf = False
 
     max_rank_str = " "
 
@@ -206,8 +240,8 @@ while start == True :
         time.sleep(0.3)
         if ranks_num not in money_list :
             money_list.append(ranks_num)
-            print("Вы получаете 200$ за новое звание!")
-            money = money + 200
+            print("Вы получаете 50$ за новое звание!")
+            money = money + 50
             time.sleep(2)
             os.system("clear")
 
@@ -231,20 +265,27 @@ while start == True :
     print("Уровень : " + str(level) + "  [" + str(exp) + "/" + str(max_exp) + " exp.]")
     print("Стамина [" + str("*" * stamina) + "] " + str(stamina * 10) + "%")
     print("Деньги : " + str(money) + "$")
-
+    #print("Увольнение : " + str(uvolnenie)) # NEW
+    if vip_tf == True :
+        print("VIP-статус Активирован! Окончание через : " + str(vip_num) )
     print("*=========================*")
 
     risk = int(random.uniform(2, 101))
 
     shans = int(random.uniform(2, 101))
 
+    money_for_quest = int(random.uniform(0,31))
+
     skip = int((100 - risk) / 4 )
 
     print(" ")
     print("[1] - отправится на задание. Шанс : " + str(risk) + "%. При успешном прохождении ты получишь : " + str(int((100 - risk) / 2 )) + " exp.")
-    print("[2] - отправится на задание с шансом +15% за " + str(skip) + "$")
+    # ОШИБКА
+    if vip_tf == True :
+        print("Вместе с VIP-статусом, Вы получите : " + str(int((100 - risk) / 2 ) + vip_risk) + " exp.")
+    print("[2] - отправится на задание с шансом +15% за " + str(skip) + "$.")
     print("[3] - пропустить задание. -" + str(int((100 - risk) / 4) + 5) + " exp.")
-    print("[4] - Магазин (NEW)")
+    print("[4] - Магазин (NEW).")
     print("[5] - сохранить и выйти.")
     print(" ")
 
@@ -265,6 +306,8 @@ while start == True :
 
     if settings == 2 :
         if money >= skip :
+            if vip_tf == True :
+                vip_num -= 1
             money = money - skip
             risk = risk + 15
             if risk > 100 :
@@ -278,6 +321,8 @@ while start == True :
 
     if settings == 1 :
         os.system("clear")
+        if vip_tf == True :
+            vip_num -= 1
         print("Выполняется...")
         playing = playing + 1
         stamina = stamina - 2
@@ -286,15 +331,26 @@ while start == True :
         if shans <= risk :
             os.system("clear")
             print("Задание выполнено! + " + str(int((100 - risk) / 2)) + " exp.")
-            exp = exp + (int((100 - risk) / 2 ))
+            print("Так же Вы получаете " + str(money_for_quest) + "$ за выполнение миссии!")
+            if vip_tf == True :
+                print("А так же + " + str(vip_money_for_quest) + "$ за VIP-статус!")
+                money += vip_money_for_quest
+                time.sleep(2)
+            exp = exp + (int((100 - risk) / 2 ) + vip_risk)
+            money += money_for_quest
             uprank = uprank + 1
             time.sleep(2)
         if shans > risk :
             os.system("clear")
             print("Задание провалено... Шанс был : " + str(risk) + "%")
             print("Вы потеряли " + str(int(((100 - risk) / 2) - 5)) + " exp.")
-            if exp > 0 :
+            if vip_tf == True :
+                os.system("clear")
+                print("Вы потеряли c VIP-статусом : " + str(int(((100 - risk) / 4) - 5)) + " exp.")
+            if exp > 0 and vip_tf == False:
                 exp = exp - (int(((100 - risk) / 2) - 5))
+            elif exp > 0 and vip_tf == True :
+                exp = exp - (int(((100 - risk) / 4) - 5))
             uprank_risk = uprank_risk + 1
             if uprank_risk == 2 :
                 uprank = uprank - 1
@@ -304,7 +360,11 @@ while start == True :
     elif settings == 3 :
         os.system("clear")
         print("Вы пропустили задание и потеряли " + str(int((100 - risk) / 2) + 5) + " exp.")
-        playing = playing - 1
+        if vip_tf == True :
+            print("С VIP-статусом +" + str(money_for_quest) + "$")
+            exp += vip_risk
+            vip_num -= 1
+        uvolnenie += 1 # NEW
         exp = exp - (int((100 - risk) / 4) + 5)
         uprank = uprank - 1
         if uprank_risk == 2 :
@@ -318,7 +378,7 @@ while start == True :
         print("[1] - [" + shop[0] + "] Стоимость : " + str(shop_money[0]) + "$")
         print("[2] - [" + shop[1] + "] Стоимость : " + str(shop_money[1]) + "$")
         print("[3] - [" + shop[2] + "] Стоимость : " + str(shop_money[2]) + "$")
-        print("[4] - [" + shop[3] + "] Стоимость : " + str(shop_money[3]) + "$ (СКОРО)")
+        print("[4] - [" + shop[3] + "] Стоимость : " + str(shop_money[3]) + "$")
         print(" ")
         print("Ваш баланс : " + str(money) + "$")
         print(" ")
@@ -349,6 +409,16 @@ while start == True :
                 money -= shop_money[2]
                 name = input("Введите новое имя : ")
                 print("Успешно приобретено новое имя! [" + name + "]")
+                time.sleep(1)
+            elif money < shop_money[1] :
+                print("Не достаточно средств!")
+                time.sleep(1)
+        elif shop_inp == 4 :
+            if money >= shop_money[3] :
+                money -= shop_money[3]
+                print("Приобретён VIP-статус на 30 ходов!")
+                vip_tf = True
+                vip_num += 30
                 time.sleep(1)
             elif money < shop_money[1] :
                 print("Не достаточно средств!")
