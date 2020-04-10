@@ -5,7 +5,7 @@ import hashlib
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 
-version = [1,0,0] # обновляй версию после каждого обновления
+version = [1,0,1] # обновляй версию после каждого обновления
 
 def encrypt(plain_text, password):
     # generate a random salt
