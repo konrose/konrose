@@ -1,4 +1,24 @@
 import os, random, time
+from sys import platform
+cles = None
+
+if platform == "linux" or platform == "linux2" :
+    cles = "clear"
+    os.system(cles)
+    print("ОС : LINUX")
+    time.sleep(1)
+
+elif platform == "darwin" :
+    cles = "clear"
+    os.system(cles)
+    print("ОС : OSX")
+    time.sleep(1)
+
+elif platform == "win32" :
+    cles = "cls"
+    os.system(cles)
+    print("ОС : WINDOWS")
+    time.sleep(1)
 
 from base64 import b64encode, b64decode
 import hashlib
@@ -102,7 +122,7 @@ try: # Если файл data.txt есть, то срабатывает этот
     vip_num = int(_vars[12])
     vip_tf = bool(_vars[13])
 
-    os.system("clear")
+    os.system(cles)
 
     print("WELCOME TO")
     time.sleep(0.2)
@@ -123,7 +143,7 @@ try: # Если файл data.txt есть, то срабатывает этот
     time.sleep(2)
 
 except: # Иначе этот
-    os.system("clear")
+    os.system(cles)
     print("WELCOME TO")
     time.sleep(0.2)
     print(" ____             _        _   _ ____  ")
@@ -209,10 +229,10 @@ shop_inp = None
 start = True
 
 while start == True :
-    os.system("clear")
+    os.system(cles)
 
     if uvolnenie == 60 :
-        os.system("clear")
+        os.system(cles)
         print("Вас уволили... Игра окончена.")
         os.system("rm data.txt")
         start = False
@@ -243,7 +263,7 @@ while start == True :
             print("Вы получаете 50$ за новое звание!")
             money = money + 50
             time.sleep(2)
-            os.system("clear")
+            os.system(cles)
 
     if exp >= max_exp :
         exp = 0
@@ -252,7 +272,7 @@ while start == True :
     if exp < 0 :
         exp = exp - exp
     if stamina == 0 :
-        os.system("clear")
+        os.system(cles)
         print("Вы отдохнули, но пропустили задание.")
         time.sleep(1)
         settings = 3
@@ -294,7 +314,7 @@ while start == True :
 
     except KeyboardInterrupt: # При нажатии Ctrl+C завершается цикл и сохраняются данные
         save_data()
-        os.system("clear")
+        os.system(cles)
         break
 
     except: # При любой другой ошибке запускается следующая итерация, код ниже НЕ ВЫПОЛНЯЕТСЯ
@@ -314,13 +334,13 @@ while start == True :
                 risk = 100
             settings = 1
         if money < skip :
-            os.system("clear")
+            os.system(cles)
             print("Не достаточно средств!")
             time.sleep(1)
             settings = 1
 
     if settings == 1 :
-        os.system("clear")
+        os.system(cles)
         if vip_tf == True :
             vip_num -= 1
         print("Выполняется...")
@@ -329,7 +349,7 @@ while start == True :
         time.sleep(2)
 
         if shans <= risk :
-            os.system("clear")
+            os.system(cles)
             print("Задание выполнено! + " + str(int((100 - risk) / 2)) + " exp.")
             print("Так же Вы получаете " + str(money_for_quest) + "$ за выполнение миссии!")
             if vip_tf == True :
@@ -341,11 +361,11 @@ while start == True :
             uprank = uprank + 1
             time.sleep(2)
         if shans > risk :
-            os.system("clear")
+            os.system(cles)
             print("Задание провалено... Шанс был : " + str(risk) + "%")
             print("Вы потеряли " + str(int(((100 - risk) / 2) - 5)) + " exp.")
             if vip_tf == True :
-                os.system("clear")
+                os.system(cles)
                 print("Вы потеряли c VIP-статусом : " + str(int(((100 - risk) / 4) - 5)) + " exp.")
             if exp > 0 and vip_tf == False:
                 exp = exp - (int(((100 - risk) / 2) - 5))
@@ -358,7 +378,7 @@ while start == True :
             time.sleep(2)
 
     elif settings == 3 :
-        os.system("clear")
+        os.system(cles)
         print("Вы пропустили задание и потеряли " + str(int((100 - risk) / 2) + 5) + " exp.")
         if vip_tf == True :
             print("С VIP-статусом +" + str(money_for_quest) + "$")
@@ -372,7 +392,7 @@ while start == True :
             uprank_risk = 0
 
     elif settings == 4 :
-        os.system("clear")
+        os.system(cles)
         stamina -= 2
 
         print("[1] - [" + shop[0] + "] Стоимость : " + str(shop_money[0]) + "$")
@@ -426,7 +446,7 @@ while start == True :
 
     elif settings == 5:
         save_data()
-        os.system("clear")
+        os.system(cles)
         break
     else:
         print('Видимо ты делаешь что-то не то в своей жизни :c')
